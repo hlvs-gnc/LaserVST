@@ -1,0 +1,27 @@
+# Ignore Visual Studio temporary files, cache, and build directories
+.vs/
+build/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Ignore CMake temporary files
+CMakeFiles/
+CMakeCache.txt
+*.vcxproj*
+*.ncb
+*.obj
+*.log
+
+# Ignore output binaries
+Debug/
+Release/
+*.dll
+*.exe
+*.lib
+*.pdb
+
+# Ignore system files
+Thumbs.db
+Desktop.ini
