@@ -46,8 +46,8 @@
 using namespace Steinberg;
 using namespace std;
 
-static const int kMaxVoices = 8;  // Maximum polyphony
-Voice voices[kMaxVoices];
+static const int kNbrVoices = 8;
+Voice voices[kNbrVoices];
 
 namespace Radar {
 //-----------------------------------------------------------------------------
@@ -96,12 +96,30 @@ tresult PLUGIN_API LaserProcessor::terminate() {
 tresult PLUGIN_API LaserProcessor::setActive(TBool state) {
   //--- called when the Plug-in is enable/disable (On/Off) -----
   if (!state) {
-    for (int v = 0; v < kMaxVoices; ++v) {
+    for (int v = 0; v < kNbrVoices; ++v) {
       voices[v] = Voice();  // Reset each voice
     }
   }
 
   return AudioEffect::setActive(state);
+}
+
+static float getWaveSample(float phase, WaveParams type) {
+  switch (type) {
+    case kSine:
+    default:
+      // Sine wave
+      return sinf(phase);
+
+    case kSaw:
+      // Saw wave: goes from -1.0 to +1.0 as phase goes 0..2π
+      // (phase / 2π) => range [0..1], scale to [0..2], shift => [-1..+1]
+      return 2.0f * (phase / (2.0f * (float)M_PI)) - 1.0f;
+
+    case kSquare:
+      // Square wave: +1 if sin(phase) ≥ 0; -1 if sin(phase) < 0
+      return (sinf(phase) >= 0.0f) ? 1.0f : -1.0f;
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -117,7 +135,7 @@ tresult PLUGIN_API LaserProcessor::process(Vst::ProcessData& data) {
               data.inputParameterChanges->getParameterData(index)) {
 
         if (paramQueue != NULL) {
-      
+
           Vst::ParamValue value;
           int32 sampleOffset;
           int32 numPoints = paramQueue->getPointCount();
@@ -126,6 +144,12 @@ tresult PLUGIN_API LaserProcessor::process(Vst::ProcessData& data) {
               kResultTrue) {
 
             switch (paramQueue->getParameterId()) {
+              case WaveParams::kWaveForm:
+                // value is in [0..1] but we have 3 discrete waveforms:
+                // convert param float 0..1 => int 0..2
+                kWaveFormType = static_cast<int>(value * 2.999999f);
+                break;
+
               case GainParams::kParamGainId:
                 mGain = (float) value;
                 break;
@@ -158,22 +182,23 @@ tresult PLUGIN_API LaserProcessor::process(Vst::ProcessData& data) {
         switch (event.type) {
           case Vst::Event::kNoteOnEvent: {
             // Find a free voice or steal one
-            for (int v = 0; v < kMaxVoices; ++v) {
+            for (int v = 0; v < kNbrVoices; ++v) {
               if (!voices[v].active) {  // Find an inactive voice
                 voices[v].frequency =
-                    kFrequencyA4 *
-                    powf(2.0f, (float)(event.noteOn.pitch - kMIDINoteA4)
-                                       / 12.0f);
-                voices[v].deltaAngle =
-                    PI2 * voices[v].frequency / data.processContext->sampleRate;
+                  kFrequencyA4 * powf(2.f, (event.noteOn.pitch - kMIDINoteA4)
+                                            / 12.f);
+
+                voices[v].deltaAngle = PI2 * voices[v].frequency
+                                      / data.processContext->sampleRate;
+
                 voices[v].phase1 = 0.f;
                 voices[v].phase2 = 0.f;
                 voices[v].volume = 0.3f;
                 voices[v].gainReduction = event.noteOn.velocity;
 
                 // Reset envelope to attack phase
-                voices[v].envelopeLevel = 0.0f;
-                voices[v].envelopePhase = 0.0f;  // Attack phase
+                voices[v].envelopeLevel = 0.f;
+                voices[v].envelopePhase = 0.f;  // Attack phase
                 voices[v].active = true;
                 break;
               }
@@ -182,14 +207,13 @@ tresult PLUGIN_API LaserProcessor::process(Vst::ProcessData& data) {
           }
           case Vst::Event::kNoteOffEvent: {
             // Turn off voices matching the note
-            for (int v = 0; v < kMaxVoices; ++v) {
+            for (int v = 0; v < kNbrVoices; ++v) {
               if (fabsf(voices[v].frequency -
-                        kFrequencyA4 * powf(2.0f, (float)(event.noteOff.pitch -
+                        kFrequencyA4 * powf(2.f, (float)(event.noteOff.pitch -
                                                           kMIDINoteA4) /
-                                                      12.0f)) < 0.001f) {
+                                                      12.f)) <= 0.001f) {
                 // Trigger release phase
-                voices[v].envelopePhase = 1.0f;  // Start release
-                voices[v].volume = 0.f;          // Silence the voice
+                voices[v].envelopePhase = 1.f;  // Start release
               }
             }
             break;
@@ -219,58 +243,57 @@ tresult PLUGIN_API LaserProcessor::process(Vst::ProcessData& data) {
     float sampleR = 0.f;
 
     // Mix all active voices
-    for (int v = 0; v < kMaxVoices; ++v) {
+    for (int v = 0; v < kNbrVoices; ++v) {
       if (voices[v].active) {
-        // Handle Envelope Attack/Release
-        if (voices[v].envelopePhase < 1.0f) {  // Attack phase
+        // Handle Envelope Attack/ Release
+        if (voices[v].envelopePhase < 1.f) {  // Attack phase
           voices[v].envelopeLevel +=
-              1.0f / (Voice::attackTime * data.processContext->sampleRate);
-          if (voices[v].envelopeLevel >= 1.0f) {
-            voices[v].envelopeLevel = 1.0f;
+              1.f / (Voice::attackTime * data.processContext->sampleRate);
+          if (voices[v].envelopeLevel >= 1.f) {
+            voices[v].envelopeLevel = 1.f;
           }
         } else {  // Release phase
-          voices[v].envelopeLevel -=
-              1.0f / (Voice::releaseTime * data.processContext->sampleRate);
+          voices[v].envelopeLevel *=
+            exp(-5.f /
+                (Voice::releaseTime * data.processContext->sampleRate));
 
           // Continue processing the tail instead of cutting off immediately
-          if (voices[v].envelopeLevel <= 0.01f) {  // Close to zero threshold
-            voices[v].envelopeLevel = 0.0f;
-            voices[v].active = false;  // Deactivate only after fade-out
+          if (voices[v].envelopeLevel <= 0.001f) {  // Close to zero threshold
+            voices[v].envelopeLevel = 0.f;
+            voices[v].active = false;
           }
         }
 
         // Apply Gain and Envelope to the Oscillators
-        float gain = mGain * (1.0f - voices[v].gainReduction);  // Scale gain
-        float osc1 = fOsc1 * sin(voices[v].phase1);             // Oscillator 1
-        float osc2 = fOsc2 * sin(voices[v].phase2);             // Oscillator 2
+        float gain = mGain * (1.f - voices[v].gainReduction);  // Scale gain
+        float osc1 = fOsc1 * getWaveSample(voices[v].phase1,
+                                           (WaveParams)kWaveFormType);
+        float osc2 = fOsc2 * getWaveSample(voices[v].phase2,
+                                           (WaveParams)kWaveFormType);
 
         // Combine oscillators and apply envelope and gain
-        float voiceSample =
-            (osc1 + osc2) * voices[v].volume * voices[v].envelopeLevel * gain;
+        float voiceSample = (osc1 + osc2) *
+                            voices[v].volume * voices[v].envelopeLevel * gain;
 
-        // Smooth fade-out for near-zero envelope levels
-        if (voices[v].envelopeLevel < 0.05f) {  // Apply fade-out threshold
-          // Further scale down near zero
-          voiceSample *= voices[v].envelopeLevel;
-        }
+        // Smooth exponential scaling
+        voiceSample *= powf(voices[v].envelopeLevel, 2.f);
 
         // Mix into stereo output
         sampleL += voiceSample;  // Left channel
         sampleR += voiceSample;  // Right channel
 
-        // Advance phases
         voices[v].phase1 += voices[v].deltaAngle;
         voices[v].phase2 += voices[v].deltaAngle * 2.f;
 
-        // Wrap phases
-        voices[v].phase1 = fmodf(voices[v].phase1, PI2);
-        voices[v].phase2 = fmodf(voices[v].phase2, PI2);
+        // Smooth phase wrapping for continuity
+        if (voices[v].phase1 > PI2) voices[v].phase1 -= PI2;
+        if (voices[v].phase2 > PI2) voices[v].phase2 -= PI2;
       }
     }
     
     // DC offset removal and clipping protection
-    sampleL = std::min(1.0f, std::max(-1.0f, sampleL));  // Clip final output
-    sampleR = std::min(1.0f, std::max(-1.0f, sampleR));
+    sampleL = std::min(1.f, std::max(-1.f, sampleL));
+    sampleR = std::min(1.f, std::max(-1.f, sampleR));
 
     // Write output
     outL[i] = sampleL;
@@ -310,6 +333,14 @@ tresult PLUGIN_API LaserProcessor::setState(IBStream* state) {
 
   // called when we load a preset, the model has to be reloaded
   IBStreamer streamer(state, kLittleEndian);
+  
+  float fval;
+
+  if (streamer.readFloat(fval) == false) {
+    return kResultFalse;
+  }
+
+  kWaveFormType = static_cast<int>(fval);
 
   float savedParamGain = 0.f;
   if (streamer.readFloat(savedParamGain) == false) {
@@ -317,8 +348,6 @@ tresult PLUGIN_API LaserProcessor::setState(IBStream* state) {
   }
   
   mGain = savedParamGain;
-
-  float fval;
 
   if (streamer.readFloat(fval) == false) {
     return kResultFalse;
@@ -342,6 +371,8 @@ tresult PLUGIN_API LaserProcessor::getState(IBStream* state) {
 
   IBStreamer streamer(state, kLittleEndian);
   
+  streamer.writeFloat(static_cast<float>(kWaveFormType));
+
   streamer.writeFloat(toSaveParamGain);
 
   streamer.writeFloat(fOsc1);

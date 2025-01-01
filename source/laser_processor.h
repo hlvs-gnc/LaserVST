@@ -40,6 +40,10 @@
 // Mathematical constants
 #define PI2 (3.14159265f * 2.f)
 
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
 // MIDI constants
 constexpr int kMIDINoteA4 = 69;         ///< MIDI note number for A4 (440 Hz).
 constexpr float kFrequencyA4 = 440.0f;  ///< Frequency of A4 in Hz.
@@ -83,6 +87,8 @@ class LaserProcessor : public Steinberg::Vst::AudioEffect {
 
  protected:
   // Parameters and voice settings
+  Steinberg::Vst::ParamValue kWaveFormType = WaveType::kSine;  ///< Gain parameter.
+
   Steinberg::Vst::ParamValue mGain = default_Gain;  ///< Gain parameter.
   Steinberg::Vst::ParamValue mGainReduction = 0.f;  ///< Gain reduction.
 

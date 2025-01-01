@@ -35,6 +35,7 @@
 
 #include "base/source/fstreamer.h"
 #include "laser_cids.h"
+
 #include "params.h"
 #include "pluginterfaces/base/ibstream.h"
 #include "vstgui/plugin-bindings/vst3editor.h"
@@ -54,6 +55,10 @@ tresult PLUGIN_API LaserController::initialize(FUnknown* context) {
   if (result != kResultOk) {
     return result;
   }
+
+  parameters.addParameter(STR16("WAVE"), STR16("Form"), 3, default_WaveType,
+                          Vst::ParameterInfo::kCanAutomate,
+                          WaveParams::kWaveForm);
 
   // Create Parameters
   parameters.addParameter(STR16("GAIN"), STR16("dB"), 0, default_Gain,
@@ -88,6 +93,14 @@ tresult PLUGIN_API LaserController::setComponentState(IBStream* state) {
 
   IBStreamer streamer(state, kLittleEndian);
 
+  float fval;
+
+  if (streamer.readFloat(fval) == false) {
+    return kResultFalse;
+  }
+
+  setParamNormalized(kWaveForm, fval);
+
   float savedParamGain = 0.f;
   if (streamer.readFloat(savedParamGain) == false) {
     return kResultFalse;
@@ -98,7 +111,6 @@ tresult PLUGIN_API LaserController::setComponentState(IBStream* state) {
     param->setNormalized(savedParamGain);
   }
 
-  float fval;
   if (streamer.readFloat(fval) == false) {
     return kResultFalse;
   }

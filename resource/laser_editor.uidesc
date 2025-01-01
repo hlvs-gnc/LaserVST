@@ -10,9 +10,10 @@
 		"colors": {},
 		"gradients": {},
 		"control-tags": {
-			"OSC1": "100",
-			"OSC2": "101",
-			"GAIN": "102"
+			"WAVE": "100",
+			"OSC1": "200",
+			"OSC2": "201",
+			"GAIN": "300"
 		},
 		"custom": {
 			"FocusDrawing": {},
@@ -39,7 +40,7 @@
 			},
 			"UIAttributesController": {},
 			"UIViewCreatorDataSource": {
-				"SelectedRow": "8"
+				"SelectedRow": "16"
 			},
 			"UIFontsDataSource": {
 				"SelectedRow": "-1"
@@ -199,6 +200,71 @@
 							"wants-focus": "true",
 							"wheel-inc-value": "0.1",
 							"zoom-factor": "1.5"
+						}
+					},
+					"CKnob": {
+						"attributes": {
+							"angle-range": "270",
+							"angle-start": "135",
+							"circle-drawing": "false",
+							"class": "CKnob",
+							"control-tag": "WAVE",
+							"corona-color": "~ GreyCColor",
+							"corona-dash-dot": "true",
+							"corona-dash-dot-lengths": "1.26,0.1",
+							"corona-drawing": "true",
+							"corona-from-center": "false",
+							"corona-inset": "12",
+							"corona-inverted": "false",
+							"corona-line-cap-butt": "true",
+							"corona-outline": "true",
+							"corona-outline-width-add": "2",
+							"handle-color": "~ WhiteCColor",
+							"handle-line-width": "8",
+							"handle-shadow-color": "~ BlackCColor",
+							"knob-range": "200",
+							"opacity": "1",
+							"origin": "15, 290",
+							"size": "70, 70",
+							"skip-handle-drawing": "true",
+							"transparent": "false",
+							"value-inset": "3",
+							"wants-focus": "true",
+							"wheel-inc-value": "0.1",
+							"zoom-factor": "1.5"
+						}
+					},
+					"CParamDisplay": {
+						"attributes": {
+							"back-color": "~ BlackCColor",
+							"background-offset": "0, 0",
+							"class": "CParamDisplay",
+							"control-tag": "WAVE",
+							"font": "~ NormalFont",
+							"font-antialias": "true",
+							"font-color": "~ WhiteCColor",
+							"frame-color": "~ BlackCColor",
+							"frame-width": "1",
+							"opacity": "1",
+							"origin": "10, 260",
+							"round-rect-radius": "6",
+							"shadow-color": "~ RedCColor",
+							"size": "80, 20",
+							"style-3D-in": "false",
+							"style-3D-out": "false",
+							"style-no-draw": "false",
+							"style-no-frame": "false",
+							"style-no-text": "false",
+							"style-round-rect": "false",
+							"style-shadow-text": "false",
+							"text-alignment": "center",
+							"text-inset": "0, 0",
+							"text-rotation": "0",
+							"text-shadow-offset": "1, 1",
+							"transparent": "false",
+							"value-precision": "2",
+							"wants-focus": "false",
+							"wheel-inc-value": "0.1"
 						}
 					}
 				}

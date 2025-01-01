@@ -34,16 +34,27 @@
 #include "pluginterfaces/vst/vsttypes.h"
 
 // Default values for parameters
+#define default_WaveType WaveType::kSine
 #define default_Gain 1.0  ///< Default gain value.
 #define default_Osc1 0.8  ///< Default frequency multiplier for Oscillator 1.
 #define default_Osc2 0.8  ///< Default frequency multiplier for Oscillator 2.
+
+enum WaveType {
+  kSine = 0,
+  kSaw,
+  kSquare
+};
+
+enum WaveParams : Steinberg::Vst::ParamID {
+  kWaveForm = 100
+};
 
 /**
  * @enum FrequencyParams
  * @brief Parameter IDs for oscillator frequency controls.
  */
 enum FrequencyParams : Steinberg::Vst::ParamID {
-  kOsc1 = 100,  ///< Parameter ID for Oscillator 1 frequency.
+  kOsc1 = 200,  ///< Parameter ID for Oscillator 1 frequency.
   kOsc2         ///< Parameter ID for Oscillator 2 frequency.
 };
 
@@ -52,7 +63,7 @@ enum FrequencyParams : Steinberg::Vst::ParamID {
  * @brief Parameter IDs for gain controls.
  */
 enum GainParams : Steinberg::Vst::ParamID {
-  kParamGainId = 102  ///< Parameter ID for gain control.
+  kParamGainId = 300  ///< Parameter ID for gain control.
 };
 
 #endif  // PARAMS_H_
