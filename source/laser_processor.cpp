@@ -74,8 +74,8 @@ tresult PLUGIN_API LaserProcessor::initialize(FUnknown* context) {
   }
 
   //--- create Audio IO ------
-  // addAudioInput (STR16 ("Stereo In"), Steinberg::Vst::SpeakerArr::kStereo);
-  addAudioOutput(STR16("Stereo Out"), Steinberg::Vst::SpeakerArr::kStereo);
+  // addAudioInput (STR16 ("Stereo In"), SpeakerArr::kStereo);
+  addAudioOutput(STR16("Stereo Out"), SpeakerArr::kStereo);
 
   /* If you don't need an event bus, you can remove the next line */
   addEventInput(STR16("Event In"), 1);
@@ -179,6 +179,7 @@ tresult PLUGIN_API LaserProcessor::process(Vst::ProcessData& data) {
       Vst::Event event;
 
       if (events->getEvent(i, event) == kResultOk) {
+
         switch (event.type) {
           case Vst::Event::kNoteOnEvent: {
             // Find a free voice or steal one

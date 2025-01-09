@@ -37,7 +37,8 @@
 
 #define stringPluginName "Laser"  ///< Name of the plugin.
 
-using namespace Steinberg::Vst;
+using namespace Steinberg;
+using namespace Vst;
 using namespace Radar;
 
 //------------------------------------------------------------------------
@@ -61,7 +62,7 @@ DEF_CLASS2(INLINE_UID_FROM_FUID(kLaserProcessorUID),  ///< Processor UID
            PClassInfo::kManyInstances,      ///< Multiple instances allowed
            kVstAudioEffectClass,            ///< Component category
            stringPluginName,                ///< Plugin name
-           Vst::kDistributable,             ///< Supports distributed systems
+           kDistributable,             ///< Supports distributed systems
            LaserVST3Category,               ///< Subcategory as Instrument
            FULL_VERSION_STR,                ///< Plugin version
            kVstVersionString,               ///< VST SDK version

@@ -2,8 +2,11 @@
 	"vstgui-ui-description": {
 		"version": "1",
 		"bitmaps": {
-			"dlfx": {
-				"path": "dlfx.png"
+			"radar2000": {
+				"path": "radar2000.png"
+			},
+			"laservst": {
+				"path": "laservst.png"
 			}
 		},
 		"fonts": {},
@@ -63,12 +66,12 @@
 				"attributes": {
 					"background-color": "~ GreyCColor",
 					"background-color-draw-style": "filled and stroked",
-					"bitmap": "dlfx",
+					"bitmap": "laservst",
 					"class": "CViewContainer",
 					"mouse-enabled": "true",
 					"opacity": "1",
 					"origin": "0, 0",
-					"size": "490, 490",
+					"size": "705, 740",
 					"transparent": "false",
 					"wants-focus": "false"
 				},
@@ -95,7 +98,7 @@
 							"handle-shadow-color": "~ BlackCColor",
 							"knob-range": "200",
 							"opacity": "1",
-							"origin": "270, 20",
+							"origin": "470, 220",
 							"size": "70, 70",
 							"skip-handle-drawing": "true",
 							"transparent": "false",
@@ -127,7 +130,7 @@
 							"handle-shadow-color": "~ BlackCColor",
 							"knob-range": "200",
 							"opacity": "1",
-							"origin": "350, 20",
+							"origin": "550, 220",
 							"size": "70, 70",
 							"skip-handle-drawing": "true",
 							"transparent": "false",
@@ -149,7 +152,7 @@
 							"frame-color": "~ BlackCColor",
 							"frame-width": "1",
 							"opacity": "1",
-							"origin": "10, 5",
+							"origin": "10, 205",
 							"round-rect-radius": "6",
 							"shadow-color": "~ RedCColor",
 							"size": "80, 20",
@@ -192,7 +195,7 @@
 							"handle-shadow-color": "~ BlueCColor",
 							"knob-range": "200",
 							"opacity": "1",
-							"origin": "15, 20",
+							"origin": "15, 220",
 							"size": "70, 70",
 							"skip-handle-drawing": "true",
 							"transparent": "false",
@@ -224,7 +227,7 @@
 							"handle-shadow-color": "~ BlackCColor",
 							"knob-range": "200",
 							"opacity": "1",
-							"origin": "15, 290",
+							"origin": "105, 410",
 							"size": "70, 70",
 							"skip-handle-drawing": "true",
 							"transparent": "false",
@@ -246,7 +249,7 @@
 							"frame-color": "~ BlackCColor",
 							"frame-width": "1",
 							"opacity": "1",
-							"origin": "10, 260",
+							"origin": "100, 390",
 							"round-rect-radius": "6",
 							"shadow-color": "~ RedCColor",
 							"size": "80, 20",

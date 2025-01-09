@@ -34,6 +34,10 @@
 #define LASER_CONTROLLER_H_
 
 #include "public.sdk/source/vst/vsteditcontroller.h"
+#include "pluginterfaces/vst/ivstmidicontrollers.h"
+
+using namespace Steinberg;
+using namespace Vst;
 
 namespace Radar {
 
@@ -43,32 +47,27 @@ namespace Radar {
  *
  * This class manages parameters and GUI interactions for the Laser VST Plugin.
  */
-class LaserController : public Steinberg::Vst::EditControllerEx1 {
+class LaserController : public EditControllerEx1 {
  public:
   LaserController() = default;                 ///< Constructor.
   ~LaserController() SMTG_OVERRIDE = default;  ///< Destructor.
 
   // Factory method for creating instances
-  static Steinberg::FUnknown* createInstance(void* /*context*/) {
-    return (Steinberg::Vst::IEditController*)new LaserController;
+  static FUnknown* createInstance(void* /*context*/) {
+    return (IEditController*) new LaserController;
   }
 
   // VST Controller overrides
-  Steinberg::tresult PLUGIN_API initialize(Steinberg::FUnknown* context)
-      SMTG_OVERRIDE;
-  Steinberg::tresult PLUGIN_API terminate() SMTG_OVERRIDE;
+  tresult PLUGIN_API initialize(FUnknown* context) SMTG_OVERRIDE;
+  tresult PLUGIN_API terminate() SMTG_OVERRIDE;
 
   // Parameter state management
-  Steinberg::tresult PLUGIN_API setComponentState(Steinberg::IBStream* state)
-      SMTG_OVERRIDE;
-  Steinberg::tresult PLUGIN_API setState(Steinberg::IBStream* state)
-      SMTG_OVERRIDE;
-  Steinberg::tresult PLUGIN_API getState(Steinberg::IBStream* state)
-      SMTG_OVERRIDE;
+  tresult PLUGIN_API setComponentState(IBStream* state) SMTG_OVERRIDE;
+  tresult PLUGIN_API setState(IBStream* state) SMTG_OVERRIDE;
+  tresult PLUGIN_API getState(IBStream* state) SMTG_OVERRIDE;
 
   // GUI handling
-  Steinberg::IPlugView* PLUGIN_API createView(Steinberg::FIDString name)
-      SMTG_OVERRIDE;
+  IPlugView* PLUGIN_API createView(FIDString name) SMTG_OVERRIDE;
 
   // Interface handling
   DEFINE_INTERFACES

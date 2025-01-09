@@ -34,6 +34,8 @@
 #include "pluginterfaces/base/funknown.h"  ///< Provides FUID definitions.
 #include "pluginterfaces/vst/vsttypes.h"   ///< Defines VST-specific types.
 
+using namespace Steinberg;
+
 namespace Radar {
 
 /**
@@ -41,7 +43,7 @@ namespace Radar {
  *
  * This ID must be unique to ensure compatibility with VST hosts.
  */
-static const Steinberg::FUID kLaserProcessorUID(0x2527AAF6, 0xAD4053EE,
+static const FUID kLaserProcessorUID(0x2527AAF6, 0xAD4053EE,
                                                 0xA92E6064, 0x887869B6);
 
 /**
@@ -49,7 +51,7 @@ static const Steinberg::FUID kLaserProcessorUID(0x2527AAF6, 0xAD4053EE,
  *
  * This ID must be unique to avoid conflicts with other VST controllers.
  */
-static const Steinberg::FUID kLaserControllerUID(0x3DE549A1, 0xC39A5F96,
+static const FUID kLaserControllerUID(0x3DE549A1, 0xC39A5F96,
                                                  0xA86E536B, 0x13D5C7F9);
 
 /**

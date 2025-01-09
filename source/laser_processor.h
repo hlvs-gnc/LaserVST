@@ -48,49 +48,46 @@
 constexpr int kMIDINoteA4 = 69;         ///< MIDI note number for A4 (440 Hz).
 constexpr float kFrequencyA4 = 440.0f;  ///< Frequency of A4 in Hz.
 
+using namespace Steinberg;
+using namespace Vst;
+
 namespace Radar {
 
 /**
  * @class LaserProcessor
  * @brief The main audio processor for the Laser VST Plugin.
  *
- * This class handles audio processing, MIDI event handling, parameter updates,
+ * This class handles audio processing, event handling, parameter updates,
  * and voice management for polyphonic synthesis.
  */
-class LaserProcessor : public Steinberg::Vst::AudioEffect {
+class LaserProcessor : public AudioEffect {
  public:
   LaserProcessor();                 ///< Constructor.
   ~LaserProcessor() SMTG_OVERRIDE;  ///< Destructor.
 
   // Factory method for creating instances
-  static Steinberg::FUnknown* createInstance(void* /*context*/) {
-    return (Steinberg::Vst::IAudioProcessor*)new LaserProcessor;
+  static FUnknown* createInstance(void* /*context*/) {
+    return (IAudioProcessor*) new LaserProcessor;
   }
 
   // VST AudioEffect overrides
-  Steinberg::tresult PLUGIN_API initialize(Steinberg::FUnknown* context)
-      SMTG_OVERRIDE;
-  Steinberg::tresult PLUGIN_API terminate() SMTG_OVERRIDE;
-  Steinberg::tresult PLUGIN_API setActive(Steinberg::TBool state) SMTG_OVERRIDE;
-  Steinberg::tresult PLUGIN_API
-  setupProcessing(Steinberg::Vst::ProcessSetup& newSetup) SMTG_OVERRIDE;
-  Steinberg::tresult PLUGIN_API
-  canProcessSampleSize(Steinberg::int32 symbolicSampleSize) SMTG_OVERRIDE;
-  Steinberg::tresult PLUGIN_API process(Steinberg::Vst::ProcessData& data)
-      SMTG_OVERRIDE;
+  tresult PLUGIN_API initialize(FUnknown* context) SMTG_OVERRIDE;
+  tresult PLUGIN_API terminate() SMTG_OVERRIDE;
+  tresult PLUGIN_API setActive(TBool state) SMTG_OVERRIDE;
+  tresult PLUGIN_API setupProcessing(ProcessSetup& newSetup) SMTG_OVERRIDE;
+  tresult PLUGIN_API canProcessSampleSize(int32 symbolicSampleSize) SMTG_OVERRIDE;
+  tresult PLUGIN_API process(ProcessData& data) SMTG_OVERRIDE;
 
   // State persistence
-  Steinberg::tresult PLUGIN_API setState(Steinberg::IBStream* state)
-      SMTG_OVERRIDE;
-  Steinberg::tresult PLUGIN_API getState(Steinberg::IBStream* state)
-      SMTG_OVERRIDE;
+  tresult PLUGIN_API setState(IBStream* state) SMTG_OVERRIDE;
+  tresult PLUGIN_API getState(IBStream* state) SMTG_OVERRIDE;
 
  protected:
   // Parameters and voice settings
-  Steinberg::Vst::ParamValue kWaveFormType = WaveType::kSine;  ///< Gain parameter.
+  ParamValue kWaveFormType = WaveType::kSine;  ///< Gain parameter.
 
-  Steinberg::Vst::ParamValue mGain = default_Gain;  ///< Gain parameter.
-  Steinberg::Vst::ParamValue mGainReduction = 0.f;  ///< Gain reduction.
+  ParamValue mGain = default_Gain;  ///< Gain parameter.
+  ParamValue mGainReduction = 0.f;  ///< Gain reduction.
 
   // Oscillator parameters
   float fOsc1 = default_Osc1;  ///< Oscillator 1 frequency multiplier.

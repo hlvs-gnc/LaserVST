@@ -35,12 +35,10 @@
 
 #include "base/source/fstreamer.h"
 #include "laser_cids.h"
-
 #include "params.h"
+
 #include "pluginterfaces/base/ibstream.h"
 #include "vstgui/plugin-bindings/vst3editor.h"
-
-using namespace Steinberg;
 
 namespace Radar {
 
@@ -67,10 +65,12 @@ tresult PLUGIN_API LaserController::initialize(FUnknown* context) {
 
   setKnobMode(Vst::kLinearMode);
   parameters.addParameter(STR16("OSC1"), STR16("Hz"), 0, default_Osc1,
-                          Vst::ParameterInfo::kCanAutomate, FrequencyParams::kOsc1);
+                          Vst::ParameterInfo::kCanAutomate,
+                          FrequencyParams::kOsc1);
 
   parameters.addParameter(STR16("OSC2"), STR16("Hz"), 0, default_Osc2,
-                          Vst::ParameterInfo::kCanAutomate, FrequencyParams::kOsc2);
+                          Vst::ParameterInfo::kCanAutomate,
+                          FrequencyParams::kOsc2);
 
   return result;
 }
