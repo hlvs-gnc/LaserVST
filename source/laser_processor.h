@@ -35,8 +35,9 @@
 #define LASER_PROCESSOR_H_
 
 #include "params.h"
-#include "public.sdk/source/vst/vstaudioeffect.h"
+#include "voice.h"
 
+#include "public.sdk/source/vst/vstaudioeffect.h"
 
 // The `std` namespace is used for standard library components
 using namespace std;
@@ -95,6 +96,9 @@ class LaserProcessor : public AudioEffect {
  protected:
   // Parameters and voice settings
   ParamValue kWaveFormType = WaveType::kSine;  ///< Gain parameter.
+
+  // Array of `Voice` objects with a size defined by `kNbrVoices` (default 8).
+  Voice voices[kNbrVoices];
 
   ParamValue mGain = default_Gain;  ///< Gain parameter.
   ParamValue mGainReduction = 0.f;  ///< Gain reduction.

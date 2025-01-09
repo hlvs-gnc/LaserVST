@@ -34,17 +34,12 @@
 #include "laser_processor.h"
 #include "laser_cids.h"
 
-#include "voice.h"
-
 #include "base/source/fstreamer.h"
 
 #include "pluginterfaces/vst/ivstparameterchanges.h"
 
 #include "public.sdk/source/vst/hosting/eventlist.h"
 #include "public.sdk/source/vst/vstaudioprocessoralgo.h"
-
-// Array of `Voice` objects with a size defined by `kNbrVoices` (default 8).
-static Voice voices[kNbrVoices];
 
 namespace Radar {
 //-----------------------------------------------------------------------------
