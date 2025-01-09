@@ -37,6 +37,19 @@
 #include "params.h"
 #include "public.sdk/source/vst/vstaudioeffect.h"
 
+
+// The `std` namespace is used for standard library components
+using namespace std;
+
+// The Steinberg namespace contains components of the VST3 SDK.
+// The Vst namespace is specifically for VST-related classes and enums.
+using namespace Steinberg;
+using namespace Vst;
+
+// Define a constant for the number of voices used in the plugin.
+static const int kNbrVoices = 8;  // A fixed number of voices for the plugin
+                                  // (e.g., 8 voices for polyphony).
+
 // Mathematical constants
 #define PI2 (3.14159265f * 2.f)
 
@@ -47,9 +60,6 @@
 // MIDI constants
 constexpr int kMIDINoteA4 = 69;         ///< MIDI note number for A4 (440 Hz).
 constexpr float kFrequencyA4 = 440.0f;  ///< Frequency of A4 in Hz.
-
-using namespace Steinberg;
-using namespace Vst;
 
 namespace Radar {
 

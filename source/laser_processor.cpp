@@ -43,11 +43,8 @@
 #include "public.sdk/source/vst/hosting/eventlist.h"
 #include "public.sdk/source/vst/vstaudioprocessoralgo.h"
 
-using namespace Steinberg;
-using namespace std;
-
-static const int kNbrVoices = 8;
-Voice voices[kNbrVoices];
+// Array of `Voice` objects with a size defined by `kNbrVoices` (default 8).
+static Voice voices[kNbrVoices];
 
 namespace Radar {
 //-----------------------------------------------------------------------------
@@ -123,7 +120,7 @@ static float getWaveSample(float phase, WaveParams type) {
 }
 
 //-----------------------------------------------------------------------------
-tresult PLUGIN_API LaserProcessor::process(Vst::ProcessData& data) {
+tresult PLUGIN_API LaserProcessor::process(ProcessData& data) {
   //--- First : Read inputs parameter changes-----------
   if (data.inputParameterChanges) {
     // for each parameter defined by its ID
@@ -131,12 +128,12 @@ tresult PLUGIN_API LaserProcessor::process(Vst::ProcessData& data) {
 
     for (int32 index = 0; index < numParamsChanged; index++) {
 
-      if (Vst::IParamValueQueue* paramQueue =
+      if (IParamValueQueue* paramQueue =
               data.inputParameterChanges->getParameterData(index)) {
 
         if (paramQueue != NULL) {
 
-          Vst::ParamValue value;
+          ParamValue value;
           int32 sampleOffset;
           int32 numPoints = paramQueue->getPointCount();
 
@@ -170,18 +167,18 @@ tresult PLUGIN_API LaserProcessor::process(Vst::ProcessData& data) {
 
   //---Second: Read input events-------------
   // get the list of all event changes
-  Vst::IEventList* events = data.inputEvents;
+  IEventList* events = data.inputEvents;
 
   if (events != NULL) {
     int32 numEvent = events->getEventCount();
 
     for (int32 i = 0; i < numEvent; i++) {
-      Vst::Event event;
+      Event event;
 
       if (events->getEvent(i, event) == kResultOk) {
 
         switch (event.type) {
-          case Vst::Event::kNoteOnEvent: {
+          case Event::kNoteOnEvent: {
             // Find a free voice or steal one
             for (int v = 0; v < kNbrVoices; ++v) {
               if (!voices[v].active) {  // Find an inactive voice
@@ -206,7 +203,7 @@ tresult PLUGIN_API LaserProcessor::process(Vst::ProcessData& data) {
             }
             break;
           }
-          case Vst::Event::kNoteOffEvent: {
+          case Event::kNoteOffEvent: {
             // Turn off voices matching the note
             for (int v = 0; v < kNbrVoices; ++v) {
               if (fabsf(voices[v].frequency -
@@ -236,8 +233,8 @@ tresult PLUGIN_API LaserProcessor::process(Vst::ProcessData& data) {
     gain = 0.f;
   }
 
-  Vst::Sample32* outL = data.outputs[0].channelBuffers32[0];
-  Vst::Sample32* outR = data.outputs[0].channelBuffers32[1];
+  Sample32* outL = data.outputs[0].channelBuffers32[0];
+  Sample32* outR = data.outputs[0].channelBuffers32[1];
 
   for (int32 i = 0; i < data.numSamples; i++) {
     float sampleL = 0.f;
@@ -306,7 +303,7 @@ tresult PLUGIN_API LaserProcessor::process(Vst::ProcessData& data) {
 
 //-----------------------------------------------------------------------------
 tresult PLUGIN_API
-LaserProcessor::setupProcessing(Vst::ProcessSetup& newSetup) {
+LaserProcessor::setupProcessing(ProcessSetup& newSetup) {
   //--- called before any processing ----
   return AudioEffect::setupProcessing(newSetup);
 }
@@ -315,12 +312,12 @@ LaserProcessor::setupProcessing(Vst::ProcessSetup& newSetup) {
 tresult PLUGIN_API
 LaserProcessor::canProcessSampleSize(int32 symbolicSampleSize) {
   // by default kSample32 is supported
-  if (symbolicSampleSize == Vst::kSample32) {
+  if (symbolicSampleSize == kSample32) {
     return kResultTrue;
   }
 
   // disable the following comment if your processing support kSample64
-  /* if (symbolicSampleSize == Vst::kSample64)
+  /* if (symbolicSampleSize == kSample64)
           return kResultTrue; */
 
   return kResultFalse;
